@@ -1,4 +1,4 @@
-import { SpotResponse } from "@/generated/model";
+import { YoutubeChannel } from "@/libs/util/YoutubeUtil";
 import create from "zustand";
 
 export type PlayerInfo = {
@@ -6,8 +6,12 @@ export type PlayerInfo = {
   multiplayAudio: boolean;
   multiplayGroupName?: string;
   multiplayPlayerId?: string;
-  spotInfo: SpotResponse | undefined;
-  setSpotInfo: (arg: SpotResponse | undefined) => void;
+  youtubeChannelInfo: YoutubeChannel | undefined;
+  currentVideoId: string | undefined;
+  nextVideoUrl: string | undefined;
+  setYoutubeChannelInfo: (arg: YoutubeChannel | undefined) => void;
+  setCurrentVideoUrl: (val: string) => void;
+  setNextVideoUrl: (val: string) => void;
   setMultiplayConnect: (val: boolean) => void;
   setMultiplayAudio: (val: boolean) => void;
   setMultiplayGroupName: (val: string | undefined) => void;
@@ -19,6 +23,9 @@ const usePlayerInfoStore = create<PlayerInfo>((set) => ({
   multiplayAudio: false,
   multiplayGroupName: "",
   multiplayPlayerId: "",
+  youtubeChannelInfo: undefined,
+  currentVideoId: "",
+  nextVideoUrl: "",
   setMultiplayConnect: (val: boolean) =>
     set((state) => ({ ...state, multiplayConnect: val })),
   setMultiplayAudio: (val: boolean) =>
@@ -27,9 +34,12 @@ const usePlayerInfoStore = create<PlayerInfo>((set) => ({
     set((state) => ({ ...state, multiplayGroupName: val })),
   setMultiplayPlayerId: (val: string) =>
     set((state) => ({ ...state, multiplayPlayerId: val })),
-  spotInfo: undefined,
-  setSpotInfo: (selectedSpotInfo: SpotResponse | undefined) =>
-    set(() => ({ spotInfo: selectedSpotInfo })),
+  setYoutubeChannelInfo: (arg: YoutubeChannel | undefined) =>
+    set((state) => ({ ...state, youtubeChannelInfo: arg })),
+  setCurrentVideoUrl: (val: string) =>
+    set((state) => ({ ...state, currentVideoId: val })),
+  setNextVideoUrl: (val: string) =>
+    set((state) => ({ ...state, nextVideoUrl: val })),
 }));
 
 export default usePlayerInfoStore;

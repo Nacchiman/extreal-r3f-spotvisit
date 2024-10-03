@@ -24,7 +24,7 @@ const RemotePlayer = (props: RemotePlayerProps) => {
     console.debug("playerInfo is not defined");
     return <>error</>;
   }
-  if (remotePlayerInfo.spotKey !== playerInfo.spotInfo?.id) {
+  if (remotePlayerInfo.spotKey !== playerInfo.youtubeChannelInfo?.id) {
     return <></>;
   }
   if (remotePlayerInfoMsg?.remotePlayerInfo) {

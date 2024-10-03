@@ -30,7 +30,7 @@ const Player = (props: PlayerProps) => {
       if (
         channel.isConnected &&
         channel.playerId &&
-        playerInfo.spotInfo &&
+        playerInfo.youtubeChannelInfo &&
         avatarRef.current
       ) {
         const msg = RemotePlayerInfoMessage.toPayload(
@@ -39,7 +39,7 @@ const Player = (props: PlayerProps) => {
           avatarSelectStore.playerName,
           avatarSelectStore.avatarType,
           avatarRef.current,
-          playerInfo.spotInfo.id,
+          playerInfo.youtubeChannelInfo.id,
           camera,
         );
 
@@ -50,7 +50,7 @@ const Player = (props: PlayerProps) => {
     [
       channel.isConnected,
       channel.playerId,
-      playerInfo.spotInfo,
+      playerInfo.youtubeChannelInfo,
       avatarSelectStore.avatarType,
       avatarSelectStore.playerName,
     ],

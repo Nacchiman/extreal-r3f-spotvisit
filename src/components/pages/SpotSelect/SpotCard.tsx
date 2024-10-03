@@ -1,35 +1,35 @@
 import usePlayerInfoStore from "@/components/basics/Player/usePlayerStore";
-import { SpotResponse } from "@/generated/model";
+import { YoutubeChannel } from "@/libs/util/YoutubeUtil";
 import { Button, Card } from "antd";
 import style from "./SpotCard.module.css";
 
 export type SpotCardProps = {
-  spot: SpotResponse;
+  spot: YoutubeChannel;
 };
 
 const SpotCard = (props: SpotCardProps) => {
-  const spot = props.spot;
+  const { spot } = props;
   const playerInfo = usePlayerInfoStore();
-  const onSelectSpot = () => {
-    playerInfo.setSpotInfo(props.spot);
+
+  const handleEnterRoom = () => {
+    playerInfo.setYoutubeChannelInfo(spot);
   };
 
   return (
     <div className={style.cardArea}>
       <Card
         className={style.card}
-        cover={<img alt="thumbnail" src={spot.thumbnailImageUrl} />}
+        cover={<img alt="thumbnail" src={spot.snippet.thumbnails.high.url} />}
       >
-        <p className={style.cardTitle}>{props.spot.name}</p>
-        <p className={style.cardBody}>{props.spot.description}</p>
+        <p className={style.cardTitle}>{spot.snippet.channelTitle}</p>
+        <p className={style.cardBody}>{spot.snippet.description}</p>
         <div className={style.cardButtonArea}>
           <Button
-            onClick={onSelectSpot}
+            onClick={handleEnterRoom}
             type="primary"
             className={style.cardButton}
-            block
           >
-            Visit
+            Enter Room
           </Button>
         </div>
       </Card>

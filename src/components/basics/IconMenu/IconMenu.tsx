@@ -38,7 +38,7 @@ const IconMenu = () => {
   };
 
   const onBack = () => {
-    playerInfo.setSpotInfo(undefined);
+    playerInfo.setYoutubeChannelInfo(undefined);
   };
 
   const ConnectStatusIcon = () => {
@@ -60,7 +60,7 @@ const IconMenu = () => {
     <>
       <Row className={styles.header}>
         <Col span={8}>
-          {playerInfo.spotInfo && (
+          {playerInfo.youtubeChannelInfo && (
             <>
               <Button
                 onClick={onBack}
@@ -77,8 +77,8 @@ const IconMenu = () => {
           )}
         </Col>
         <Col span={8} className={styles.title}>
-          {playerInfo.spotInfo ? (
-            <p>{playerInfo.spotInfo.name}</p>
+          {playerInfo.youtubeChannelInfo ? (
+            <p>{playerInfo.youtubeChannelInfo.snippet.title}</p>
           ) : (
             <p>Select Spot</p>
           )}

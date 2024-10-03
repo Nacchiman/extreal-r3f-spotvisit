@@ -2,8 +2,9 @@
   width: 300px;
   border-radius: 10px;
   margin: 5px;
-  padding: 10px;
-  background-color: springgreen;
+  padding: 3px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  background-color: black;
 }
 
 .card :global(.ant-card-body) {
@@ -19,7 +20,7 @@
 
 .cardBody {
   padding: 8px;
-  height: 200px;
+  height: 100px;
   overflow: auto;
 }
 .cardButtonArea {

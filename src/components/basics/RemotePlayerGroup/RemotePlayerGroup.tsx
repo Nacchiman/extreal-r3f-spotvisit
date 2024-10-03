@@ -40,7 +40,11 @@ const RemotePlayerGroup = (props: RemotePlayerGroupProps) => {
           //Send your info upon first message from a new player
           if (!remotePlayerInfoMap.getItem(msg.playerId)) {
             msg.command = RemotePlayerInfoMessageType.NEW;
-            if (channel.playerId && playerInfo.spotInfo && avatarRef.current) {
+            if (
+              channel.playerId &&
+              playerInfo.youtubeChannelInfo &&
+              avatarRef.current
+            ) {
               channel.enqueueRequest(
                 RemotePlayerInfoMessage.toPayload(
                   channel.playerId,
@@ -48,7 +52,7 @@ const RemotePlayerGroup = (props: RemotePlayerGroupProps) => {
                   avatarSelectStore.playerName,
                   avatarSelectStore.avatarType,
                   avatarRef.current,
-                  playerInfo.spotInfo?.id,
+                  playerInfo.youtubeChannelInfo?.id,
                   camera,
                 ),
               );

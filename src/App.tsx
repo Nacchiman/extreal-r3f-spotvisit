@@ -51,7 +51,7 @@ function App() {
             onJoinCallback={onJoinCallback}
             onLeaveCallback={onLeaveCallback}
           />
-          {playerInfo.spotInfo ? <InSpot /> : <SpotSelectPanel />}
+          {playerInfo.youtubeChannelInfo ? <InSpot /> : <SpotSelectPanel />}
         </QueryClientProvider>
       </ErrorBoundary>
     </>
