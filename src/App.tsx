@@ -2,9 +2,8 @@ import IconMenu from "@/components/basics/IconMenu/IconMenu";
 import MultiplayChannel from "@/components/basics/Multiplay/MultiplayChannel";
 import usePlayerInfoStore from "@/components/basics/Player/usePlayerStore";
 import VConsoleComp from "@/components/basics/VConsole/VConsole";
+import { DemoScene } from "@/components/pages/DemoScene/DemoScene";
 import ErrorPage from "@/components/pages/ErrorPage/ErrorPage";
-import InSpot from "@/components/pages/InSpot/InSpot";
-import SpotSelectPanel from "@/components/pages/SpotSelect/SpotSelectPanel";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
 import "./App.css";
@@ -51,7 +50,8 @@ function App() {
             onJoinCallback={onJoinCallback}
             onLeaveCallback={onLeaveCallback}
           />
-          {playerInfo.spotInfo ? <InSpot /> : <SpotSelectPanel />}
+          {/* {playerInfo.spotInfo ? <InSpot /> : <SpotSelectPanel />} */}
+          <DemoScene />
         </QueryClientProvider>
       </ErrorBoundary>
     </>

@@ -17,6 +17,6 @@ module.exports = {
       "warn",
       { allowConstantExport: true },
     ],
-    "react/no-unknown-property": ["warn", { ignore: ["JSX"] }],
+    "react/no-unknown-property": "off",
   },
 };

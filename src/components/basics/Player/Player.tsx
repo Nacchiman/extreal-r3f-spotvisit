@@ -18,6 +18,7 @@ export interface PlayerProps {
   movement: CharacterController;
 }
 
+// TODO: ecctrlの操作に変更する
 const Player = (props: PlayerProps) => {
   const avatarSelectStore = useAvatarSelectStore();
   const playerInfo = usePlayerInfoStore();
