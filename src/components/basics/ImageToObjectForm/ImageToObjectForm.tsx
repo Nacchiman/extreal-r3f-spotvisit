@@ -1,66 +1,64 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Button, Form, message, Upload } from "antd";
-import axios from "axios";
+import { Button, Form, message, Upload, UploadProps } from "antd";
+import { RcFile } from "antd/es/upload/interface";
 import { useState } from "react";
 
 export interface ImageToObjectFormProps {
-  fetchObject: (file: {
-    file_type: string;
-    file_token: string;
-  }) => Promise<void>;
+  uploadImage: (file: File) => Promise<string>;
+  fetchObject: (fileType: string, fileToken: string) => Promise<void>;
 }
 
 export const ImageToObjectForm = (props: ImageToObjectFormProps) => {
-  const [fileToken, setFileToken] = useState<string | null>(null);
-
-  const handleUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await axios.post("/upload-endpoint", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      setFileToken(response.data.file_token);
-      message.success("File uploaded successfully!");
-    } catch (error) {
-      message.error("Failed to upload file.");
-    }
-  };
+  const { uploadImage, fetchObject } = props;
+  const [file, setFile] = useState<RcFile | undefined>(undefined);
+  const [fileToken, setFileToken] = useState<string | undefined>(undefined);
 
   const handleSubmit = async () => {
-    if (!fileToken) {
+    if (!file || !fileToken) {
       message.error("Please upload a file first.");
       return;
     }
 
-    const requestData = {
-      //拡張子
-      file_type: file.type,
-      file_token: fileToken,
-    };
-
     try {
-      await props.fetchObject(requestData);
+      await fetchObject(file.name, fileToken);
       message.success("Object fetched successfully!");
     } catch (error) {
       message.error("Failed to fetch object.");
     }
   };
 
+  const uploadAction = async (file: RcFile) => {
+    try {
+      return uploadImage(file);
+    } catch (error) {
+      message.error(`Failed to upload file: ${error}`);
+      throw error;
+    }
+  };
+
+  const uploadProps: UploadProps = {
+    name: "file",
+    action: uploadAction,
+    accept: ".jpg,.jpeg,.png",
+    onChange(info) {
+      if (info.file.status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === "done") {
+        setFileToken(info.file.response.file_token);
+        setFile(info.file.originFileObj);
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
   return (
     <div style={{ position: "absolute", top: 150, left: 10, zIndex: 1000 }}>
       <Form layout="inline" onFinish={handleSubmit}>
         <Form.Item>
-          <Upload
-            beforeUpload={(file) => {
-              handleUpload(file);
-              return false; // Prevent automatic upload
-            }}
-            showUploadList={false}
-          >
+          <Upload {...uploadProps}>
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
         </Form.Item>

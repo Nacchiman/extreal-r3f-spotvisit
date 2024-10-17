@@ -1,38 +1,67 @@
 import axios from "axios";
 import { useCallback, useState } from "react";
 
+type TaskData = {
+  status?: string;
+  progress?: number;
+  error?: string;
+  gltfUrl?: string;
+};
+
 export const useGeneratedObject = () => {
   const lambdaEndpoint = import.meta.env.VITE_GENERATE_OBJECT_LAMBDA_ENDPOINT;
   const statusEndpoint = import.meta.env.VITE_GET_TASK_STATUS_LAMBDA_ENDPOINT;
+  // const uploadLambdaEndpoint = import.meta.env
+  //   .VITE_UPLOAD_IMAGE_LAMBDA_ENDPOINT;
 
-  const [status, setStatus] = useState<string | undefined>(undefined);
-  const [progress, setProgress] = useState<number | undefined>(undefined);
-  const [error, setError] = useState<string | undefined>(undefined);
-  const [gltfUrl, setGltfUrl] = useState<string | undefined>(undefined);
-
-  // TODO: ファイルをアップロードする関数を定義する
+  const [taskMap, setTaskMap] = useState<Map<string, TaskData>>(new Map());
 
   const pollTaskStatus = useCallback(
-    (taskId: string) => {
+    (taskId: string, prompt: string) => {
       const interval = setInterval(async () => {
         try {
           const statusResponse = await axios.get(
             `${statusEndpoint}?task_id=${taskId}`,
           );
           const { status, progress, output } = statusResponse.data.data;
-          setStatus(status);
-          setProgress(progress);
+
+          setTaskMap((prev) => {
+            const currentData = prev.get(prompt) || {};
+            return new Map(prev).set(prompt, {
+              ...currentData,
+              status,
+              progress,
+            });
+          });
 
           if (status === "success" && output?.model) {
-            setGltfUrl(output.model);
+            setTaskMap((prev) => {
+              const currentData = prev.get(prompt) || {};
+              return new Map(prev).set(prompt, {
+                ...currentData,
+                gltfUrl: output.model,
+              });
+            });
             clearInterval(interval);
           } else if (["failed", "cancelled", "unknown"].includes(status)) {
-            setError(`Task ${status}. Please report task_id: ${taskId}`);
+            setTaskMap((prev) => {
+              const currentData = prev.get(prompt) || {};
+              return new Map(prev).set(prompt, {
+                ...currentData,
+                error: `Task ${status}. Please report task_id: ${taskId}`,
+              });
+            });
             clearInterval(interval);
           }
         } catch (statusError) {
           console.error("Error fetching task status:", statusError);
-          setError("Error fetching task status");
+          setTaskMap((prev) => {
+            const currentData = prev.get(prompt) || {};
+            return new Map(prev).set(prompt, {
+              ...currentData,
+              error: "Error fetching task status",
+            });
+          });
           clearInterval(interval);
         }
       }, 5000);
@@ -40,10 +69,49 @@ export const useGeneratedObject = () => {
     [statusEndpoint],
   );
 
+  // const uploadImage = useCallback(
+  //   async (file: File): Promise<string> => {
+  //     // 画像データをArrayBufferとして読み込む
+  //     const reader = new FileReader();
+  //     reader.readAsArrayBuffer(file);
+  //     const fileData = await new Promise<ArrayBuffer>((resolve, reject) => {
+  //       reader.onload = () => resolve(reader.result as ArrayBuffer);
+  //       reader.onerror = () => reject(new Error("Failed to read file"));
+  //     });
+
+  //     // ファイルの拡張子に基づいてContent-Typeを設定
+  //     const fileType = file.type;
+  //     if (!["image/jpeg", "image/jpg", "image/png"].includes(fileType)) {
+  //       message.error(
+  //         "Unsupported file type. Please upload a JPEG or PNG image.",
+  //       );
+  //       throw new Error("Unsupported file type.");
+  //     }
+
+  //     // 画像データをリクエストボディに直接入れる
+  //     const response = await axios.post(
+  //       uploadLambdaEndpoint,
+  //       new Blob([fileData], { type: fileType }),
+  //       {s
+  //         headers: {
+  //           "Content-Type": fileType,
+  //         },
+  //       },
+  //     );
+
+  //     if (response.status !== 200) {
+  //       throw new Error(`Error uploading image: ${response.data.error}`);
+  //     }
+
+  //     return response.data.image_token;
+  //   },
+  //   [uploadLambdaEndpoint],
+  // );
+
   const fetchObject = useCallback(
     async (
       type: "text_to_model" | "image_to_model",
-      prompt?: string,
+      prompt: string,
       fileType?: string,
       fileToken?: string,
     ): Promise<void> => {
@@ -68,12 +136,24 @@ export const useGeneratedObject = () => {
         if (!taskId) {
           throw new Error("Task ID is undefined.");
         }
-        setStatus("queued");
-        setProgress(0);
-        pollTaskStatus(taskId);
+        setTaskMap((prev) => {
+          const currentData = prev.get(prompt) || {};
+          return new Map(prev).set(prompt, {
+            ...currentData,
+            status: "queued",
+            progress: 0,
+          });
+        });
+        pollTaskStatus(taskId, prompt);
       } catch (error) {
         console.error("Error fetching object from Lambda:", error);
-        setError("Failed to fetch object.");
+        setTaskMap((prev) => {
+          const currentData = prev.get(prompt) || {};
+          return new Map(prev).set(prompt, {
+            ...currentData,
+            error: "Failed to fetch object.",
+          });
+        });
       }
     },
     [lambdaEndpoint, pollTaskStatus],
@@ -86,19 +166,17 @@ export const useGeneratedObject = () => {
     [fetchObject],
   );
 
-  const fetchImageObject = useCallback(
-    async (fileType: string, fileToken: string): Promise<void> => {
-      await fetchObject("image_to_model", undefined, fileType, fileToken);
-    },
-    [fetchObject],
-  );
+  // const fetchImageObject = useCallback(
+  //   async (fileType: string, fileToken: string): Promise<void> => {
+  //     await fetchObject("image_to_model", undefined, fileType, fileToken);
+  //   },
+  //   [fetchObject],
+  // );
 
   return {
+    // uploadImage,
     fetchTextObject,
-    fetchImageObject,
-    status,
-    progress,
-    error,
-    gltfUrl,
+    // fetchImageObject,
+    taskMap, // 一つのMapとして返す
   };
 };

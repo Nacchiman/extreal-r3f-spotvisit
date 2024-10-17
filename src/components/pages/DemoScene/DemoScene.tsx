@@ -1,6 +1,5 @@
 import { AvatarHandle } from "@/components/basics/Avatar/Avatar";
 import useAvatarSelectStore from "@/components/basics/AvatarSelect/useAvatarSelectStore";
-import { ImageToObjectForm } from "@/components/basics/ImageToObjectForm/ImageToObjectForm";
 import Player from "@/components/basics/Player/Player";
 import RemotePlayerGroup from "@/components/basics/RemotePlayerGroup/RemotePlayerGroup";
 import { TextToObject } from "@/components/basics/TextToObject/TextToObject";
@@ -21,18 +20,20 @@ export const DemoScene = () => {
   const avatarRef = useRef<AvatarHandle | null>(null);
 
   const {
+    // uploadImage,
     fetchTextObject,
-    fetchImageObject,
-    status,
-    progress,
-    error,
-    gltfUrl,
+    // fetchImageObject,
+    taskMap,
   } = useGeneratedObject();
 
   return (
     <>
       <TextToObjectForm fetchObject={fetchTextObject} />
-      <ImageToObjectForm fetchObject={fetchImageObject} />
+      {/* FIXME: 画像からのオブジェクト生成は未実装。Tripo3DのAPIにAPIOGW + Lambda経由で画像のバイナリデータを送ると2004エラーコードがTripoから返ってくる。なんでや */}
+      {/* <ImageToObjectForm
+        uploadImage={uploadImage}
+        fetchObject={fetchImageObject}
+      /> */}
       <VirtualJoyStick handle={handleJoystickData} startJump={startJump} />
       <div className={styles.canvasDiv}>
         <Canvas linear={true} flat={true}>
@@ -59,12 +60,15 @@ export const DemoScene = () => {
               <RemotePlayerGroup avatarRef={avatarRef} />
             </>
           )}
-          <TextToObject
-            gltfUrl={gltfUrl}
-            status={status}
-            progress={progress}
-            error={error}
-          />
+          {Array.from(taskMap.values()).map((taskData) => (
+            <TextToObject
+              key={taskData.gltfUrl}
+              gltfUrl={taskData.gltfUrl}
+              status={taskData.status}
+              progress={taskData.progress}
+              error={taskData.error}
+            />
+          ))}
         </Canvas>
       </div>
     </>

@@ -1,5 +1,6 @@
-import { Html } from "@react-three/drei";
-import React from "react";
+import { PivotScaleForm } from "@/components/basics/TextToObject/PivotScaleForm";
+import { Html, PivotControls } from "@react-three/drei";
+import React, { useRef, useState } from "react";
 import { GeneratedObject } from "../GeneratedObject/GeneratedObject";
 
 interface TextToObjectProps {
@@ -15,17 +16,49 @@ export const TextToObject: React.FC<TextToObjectProps> = ({
   progress,
   error,
 }) => {
+  const [controlVisible, setPivotVisible] = useState(false);
+  const [scale, setScale] = useState(1);
+
+  const scaleFactor = 0.5;
+  const onScaleUp = () => {
+    setScale((prev) => prev + scaleFactor);
+  };
+  const onScaleDown = () => {
+    setScale((prev) => prev - scaleFactor);
+  };
+
+  const timer = useRef<NodeJS.Timeout | null>(null);
+  const onPointerOver = () => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
+    setPivotVisible(true);
+  };
+  const onPointerOut = () => {
+    timer.current = setTimeout(() => {
+      setPivotVisible(false);
+    }, 5000);
+  };
+
   return (
     <>
       {gltfUrl ? (
-        <GeneratedObject gltfUrl={gltfUrl} />
+        // TODO: opacityで徐々に非表示になるようにする
+        <PivotControls visible={controlVisible} depthTest={false}>
+          <GeneratedObject
+            gltfUrl={gltfUrl}
+            scale={scale}
+            onPointerOver={onPointerOver}
+            onPointerOut={onPointerOut}
+          />
+          <Html position={[0, 1, 0]}>
+            {controlVisible && (
+              <PivotScaleForm onScaleUp={onScaleUp} onScaleDown={onScaleDown} />
+            )}
+          </Html>
+        </PivotControls>
       ) : (
-        <Html
-          occlude="blending"
-          transform
-          position={[0, 1, 0]}
-          style={{ pointerEvents: "none" }}
-        >
+        <Html position={[0, 1, 0]} style={{ pointerEvents: "none" }}>
           <div
             style={{
               backgroundColor: "rgba(255, 255, 255, 0.8)",
