@@ -1,0 +1,117 @@
+.roomEnterButton {
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 10;
+  margin: 0 auto;
+
+  @media (max-width: 700px) {
+    :global .ant-btn {
+      width: 122px !important;
+      height: 44px !important;
+    }
+  }
+  @media (min-width: 701px) {
+    :global .ant-btn {
+      width: 267px !important;
+      height: 44px !important;
+    }
+  }
+}
+
+.roomEnterButtonArea {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.roomPreviewFormArea {
+  position: absolute;
+  transform: translate(-50%, -80%);
+  opacity: 0;
+
+  width: 100vw;
+  @media (max-width: 700px) {
+    transform: translate(-50%, -50%);
+  }
+  @media (max-width: 400px) {
+    transform: translate(-50%, -80%);
+  }
+}
+/* フェードインアニメーション */
+@keyframes fadeIn {
+  0% {
+  }
+  100% {
+    opacity: 1;
+  }
+}
+/* フェードインさせるクラス */
+.fadeIn {
+  animation-name: fadeIn;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+
+/* フェードアウトアニメーション */
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/* フェードアウトさせるクラス */
+.fadeOut {
+  animation-name: fadeOut;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+
+.centerRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.titleAndInfoIconRow {
+  height: 57px;
+  margin-bottom: 8px;
+}
+
+.isVideoRoomIcon {
+  fill: white;
+  stroke: #3a3a3a;
+  stroke-width: 0.75px;
+  stroke-opacity: 1;
+  font-size: 32px;
+  padding-right: 8px;
+}
+
+.roomTitleArea {
+  width: fit-content;
+  height: auto;
+  display: flex;
+  align-items: center;
+}
+
+.roomTitle {
+  color: white;
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  -webkit-text-fill-color: white;
+  -webkit-text-stroke: 1.5px #3a3a3a;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis; /* 要素内でテキストがはみ出た場合に省略記号を表示する */
+  -webkit-line-clamp: 2; /* 折り返す行数 */
+  line-clamp: 2; /* 折り返す行数 */
+  max-width: 400px;
+  @media (max-width: 700px) {
+    max-width: 280px;
+  }
+  user-select: none;
+}

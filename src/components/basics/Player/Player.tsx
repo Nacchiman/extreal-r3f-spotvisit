@@ -15,13 +15,14 @@ import { MutableRefObject, useCallback, useEffect } from "react";
 
 export interface PlayerProps {
   avatarRef: MutableRefObject<AvatarHandle | null>;
-  movement: CharacterController;
+  movement?: CharacterController;
+  scale?: number;
 }
 
 const Player = (props: PlayerProps) => {
   const avatarSelectStore = useAvatarSelectStore();
   const playerInfo = usePlayerInfoStore();
-  const { movement, avatarRef } = props;
+  const { movement, avatarRef, scale } = props;
   const channel = useMultiplayChannelStore();
   const { camera } = useThree();
 
@@ -67,12 +68,12 @@ const Player = (props: PlayerProps) => {
       enqueueUpdate(RemotePlayerInfoMessageType.MOVE);
     }
   }, [
-    movement.forward,
-    movement.backward,
-    movement.left,
-    movement.right,
-    movement.running,
-    movement.jump,
+    movement?.forward,
+    movement?.backward,
+    movement?.left,
+    movement?.right,
+    movement?.running,
+    movement?.jump,
     channel.isConnected,
     enqueueUpdate,
   ]);
@@ -96,6 +97,7 @@ const Player = (props: PlayerProps) => {
         animationMap={defaultAnimationMap}
         controller={movement}
         playerId={playerInfo.multiplayPlayerId}
+        scale={scale}
       />
     </>
   );

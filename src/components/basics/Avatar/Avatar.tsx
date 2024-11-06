@@ -35,6 +35,7 @@ export interface AvatarProps {
   remoteRotation?: THREE.Euler;
   remoteCameraDirection?: THREE.Vector3;
   remoteCameraUp?: THREE.Vector3;
+  scale?: number;
 }
 
 export type AvatarHandle = {
@@ -66,6 +67,7 @@ export const Avatar = forwardRef((props: AvatarProps, ref) => {
     remoteRotation,
     remoteCameraDirection,
     remoteCameraUp,
+    scale,
   } = props;
 
   const { gltf, progress, error } = useLoadVRM({ avatarPath });
@@ -176,7 +178,7 @@ export const Avatar = forwardRef((props: AvatarProps, ref) => {
           </Html>
         ) : gltf ? (
           <>
-            <group ref={avatarRef}>
+            <group ref={avatarRef} scale={scale}>
               <primitive object={gltf.scene} />
             </group>
             <mesh ref={panelRef} scale={0.4}>

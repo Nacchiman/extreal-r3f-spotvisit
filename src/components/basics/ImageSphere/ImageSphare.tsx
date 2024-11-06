@@ -4,6 +4,12 @@ import * as THREE from "three";
 
 export type ImageSphereProps = {
   imageSourceUrl: string;
+  radius: number;
+  side: THREE.Side;
+  inverse: boolean;
+  scale?: [number, number, number];
+  position?: [number, number, number];
+  rotation?: [number, number, number];
 };
 
 const ImageSphere: React.FC<ImageSphereProps> = (props: ImageSphereProps) => {
@@ -11,9 +17,13 @@ const ImageSphere: React.FC<ImageSphereProps> = (props: ImageSphereProps) => {
   return (
     <>
       {imageTexture && (
-        <mesh scale={[100, 100, 100]}>
+        <mesh
+          scale={props.scale}
+          position={props.position}
+          rotation={props.rotation}
+        >
           <sphereGeometry />
-          <meshBasicMaterial side={THREE.BackSide} map={imageTexture} />
+          <meshBasicMaterial side={props.side} map={imageTexture} />
         </mesh>
       )}
     </>
